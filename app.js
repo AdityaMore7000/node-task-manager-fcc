@@ -1,9 +1,9 @@
 const express = require('express')
 require("dotenv").config();
 const taskRoutes = require('./routes/tasks')
-
+const connectDB = require('./db/connect');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use('/api/v1/tasks',taskRoutes)
@@ -12,6 +12,17 @@ app.get('/hello',(req,res) =>{
     res.json({msg:"task manager app"})
 })
 
-app.listen(port,() =>{
-    console.log(`Listening on http://localhost:${port}`)
-})
+const start = async ()=>{
+    try {
+        await connectDB(process.env.MONGO_CONNECTION_URI)
+        app.listen(port,() =>{
+            console.log(`Listening on http://localhost:${port}`)
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+start();
+
+
