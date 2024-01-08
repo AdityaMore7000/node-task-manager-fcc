@@ -1,7 +1,7 @@
-const express = require('express')
-require("dotenv").config();
-const taskRoutes = require('./routes/tasks')
-const connectDB = require('./db/connect');
+import express from 'express'
+import 'dotenv/config'
+import taskRoutes from './routes/tasks.js';
+import connectDB from './db/connect.js';
 const app = express();
 const port = process.env.PORT || 5000;
 app.use(express.json())

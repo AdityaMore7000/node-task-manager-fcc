@@ -1,27 +1,67 @@
-function getAllTasks(req,res){
-    console.log(req.method)
-    res.json({msg:'here are all your tasks'})
+import Task from'../models/task.js';
+
+/**
+ * 
+ * @param {import('express').Request} req 
+ * @param {import('express').Response} res 
+ * @returns {JSON}
+ */
+export async function getAllTasks(req,res){
+    const tasks = await Task.find({}); 
+    res.json(tasks);
 }
-function createTask(req,res){
-    console.log(req.method)
-    res.json({msg:'Created new task'})
+/**
+ * 
+ * @param {import('express').Request} req 
+ * @param {import('express').Response} res 
+ * @returns {JSON}
+ */
+export async function createTask(req,res){
+    try{
+
+        const task = await Task.create(req.body)
+        res.status(201).json({task})
+    }
+    catch(err){
+        console.error(err)
+        res.status(400).json({msg:"Bad Request"})
+    }
 }
-function getTask(req,res){
-    console.log(req.method)
-    res.json({msg:'one task'})
+/**
+ * 
+ * @param {import('express').Request} req 
+ * @param {import('express').Response} res 
+ * @returns {JSON}
+ */
+export async function getTask(req,res){
+    try{
+
+        const {id} = req.params;
+        const task = await Task.findById(id)
+        res.json(task)
+    }
+    catch(err){
+        console.error(err)
+    }
 }
-function updateTask(req,res){
+/**
+ * 
+ * @param {import('express').Request} req 
+ * @param {import('express').Response} res 
+ * @returns {JSON}
+ */
+export function updateTask(req,res){
     console.log(req.method)
     res.json({msg:'updated task'})
 }
-function deleteTask(req,res){
-    console.log(req.method)
-    res.json({msg:'deleted task'})
-}
-module.exports = {
-    getAllTasks,
-    createTask,
-    getTask,
-    updateTask,
-    deleteTask
+/**
+ * 
+ * @param {import('express').Request} req 
+ * @param {import('express').Response} res 
+ * @returns {JSON}
+ */
+export async function deleteTask(req,res){
+    const {id} = req.params
+    const deletedTask = await Task.findByIdAndDelete(id);
+    res.json(deletedTask)
 }
