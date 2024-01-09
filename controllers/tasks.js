@@ -2,29 +2,42 @@ import Task from'../models/task.js';
 
 /**
  * 
- * @param {import('express').Request} req 
  * @param {import('express').Response} res 
+ * @param {Error} err 
+ */
+function error(res,err){
+    res.status(500).json({msg:err.message})
+}
+
+/**
+ * 
+ * @param {import('express').Request} req 
+ * @param {import('express').Response} res
  * @returns {JSON}
  */
 export async function getAllTasks(req,res){
-    const tasks = await Task.find({}); 
-    res.json(tasks);
+    try{
+
+        const tasks = await Task.find({}); 
+        res.json(tasks);
+    }
+    catch(err){
+        error(res,err)
+    }
 }
 /**
  * 
  * @param {import('express').Request} req 
  * @param {import('express').Response} res 
  * @returns {JSON}
- */
+*/
 export async function createTask(req,res){
     try{
-
         const task = await Task.create(req.body)
         res.status(201).json({task})
     }
     catch(err){
-        console.error(err)
-        res.status(400).json({msg:"Bad Request"})
+        error(res,err)
     }
 }
 /**
@@ -32,16 +45,16 @@ export async function createTask(req,res){
  * @param {import('express').Request} req 
  * @param {import('express').Response} res 
  * @returns {JSON}
- */
+*/
 export async function getTask(req,res){
     try{
-
+        
         const {id} = req.params;
         const task = await Task.findById(id)
         res.json(task)
     }
     catch(err){
-        console.error(err)
+        error(res,err)
     }
 }
 /**
@@ -49,10 +62,18 @@ export async function getTask(req,res){
  * @param {import('express').Request} req 
  * @param {import('express').Response} res 
  * @returns {JSON}
- */
-export function updateTask(req,res){
-    console.log(req.method)
-    res.json({msg:'updated task'})
+*/
+export async function updateTask(req,res){
+    try {
+        const {id} = req.params;
+        const task = await Task.findByIdAndUpdate(id,req.body,{
+            runValidators:true,
+            new:true
+        })
+        res.status(200).json(task)
+    } catch (error) {        
+        error(res,err)
+    }
 }
 /**
  * 
@@ -61,7 +82,12 @@ export function updateTask(req,res){
  * @returns {JSON}
  */
 export async function deleteTask(req,res){
-    const {id} = req.params
-    const deletedTask = await Task.findByIdAndDelete(id);
-    res.json(deletedTask)
+    try{
+        const {id} = req.params
+        const deletedTask = await Task.findByIdAndDelete(id);
+        res.json(deletedTask)
+    }
+    catch(err){
+        error(res,err)
+    }
 }
